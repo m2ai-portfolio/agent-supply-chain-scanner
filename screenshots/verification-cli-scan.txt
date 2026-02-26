@@ -1,0 +1,18 @@
+==================================================
+Agent Supply Chain Scanner - Results
+==================================================
+Target: /tmp/test
+Status: completed
+
+Findings:
+  No vulnerabilities found
+  Warnings: 3
+    - WARNING: This is a prototype/stub implementation
+    - Actual vulnerability scanning is not yet implemented
+    - Results should not be used for production security decisions
+
+Information:
+  - Scan completed successfully
+  - Target: /tmp/test
+  - No vulnerabilities found (stub implementation)
+==================================================

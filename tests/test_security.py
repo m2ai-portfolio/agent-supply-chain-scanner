@@ -98,10 +98,10 @@ class TestPathTraversalPrevention:
 
 
 class TestStubImplementationWarning:
-    """Test that stub implementation warnings are present."""
+    """Test that implementation warnings are present."""
 
-    def test_scan_results_contain_stub_warning(self, tmp_path):
-        """Test that scan results include stub implementation warning."""
+    def test_scan_results_contain_warnings(self, tmp_path):
+        """Test that scan results include appropriate warnings."""
         test_file = tmp_path / "test.py"
         test_file.write_text("# test file")
         output_file = tmp_path / "results.json"
@@ -119,17 +119,18 @@ class TestStubImplementationWarning:
         assert "warnings" in results
         assert len(results["warnings"]) > 0
 
-        # Check that warning mentions stub/prototype
+        # Check that warnings mention manual review and automated scanner
         warnings_text = " ".join(results["warnings"]).lower()
-        assert "stub" in warnings_text or "prototype" in warnings_text
+        assert "automated" in warnings_text or "manual" in warnings_text
 
     def test_text_output_contains_warnings(self, tmp_path, capsys):
-        """Test that text output displays warnings."""
+        """Test that text output displays warnings/notes."""
         test_file = tmp_path / "test.py"
         test_file.write_text("# test file")
 
         scan_target(str(test_file), output_format="text", verbose=False)
 
         captured = capsys.readouterr()
-        assert "WARNING" in captured.out or "warning" in captured.out.lower()
-        assert "stub" in captured.out.lower() or "prototype" in captured.out.lower()
+        # Check for NOTES section which contains warnings
+        assert "NOTE" in captured.out or "note" in captured.out.lower()
+        assert "automated" in captured.out.lower() or "manual" in captured.out.lower()

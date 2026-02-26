@@ -4,6 +4,7 @@ import argparse
 import sys
 import tempfile
 import os
+import logging
 from typing import Optional
 
 from src.core import scan_target
@@ -77,6 +78,7 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     # Setup logging
     setup_logging(verbose=args.verbose)
+    logger = logging.getLogger(__name__)
 
     # Handle stdin input
     temp_file = None
@@ -85,13 +87,13 @@ def main(argv: Optional[list[str]] = None) -> int:
     try:
         # If target is "-", read from stdin
         if args.target == "-":
-            if args.verbose:
-                print("Reading from stdin...", file=sys.stderr)
+            logger.info("Reading from stdin...")
 
             # Read stdin content
             stdin_content = sys.stdin.read()
 
             if not stdin_content.strip():
+                logger.error("No input received from stdin")
                 print("Error: No input received from stdin", file=sys.stderr)
                 return 1
 
@@ -107,11 +109,10 @@ def main(argv: Optional[list[str]] = None) -> int:
             temp_file.close()
 
             target_path = temp_file.name
-
-            if args.verbose:
-                print(f"Created temporary file: {target_path}", file=sys.stderr)
+            logger.debug(f"Created temporary file: {target_path}")
 
         # Execute the scan
+        logger.info(f"Starting scan of target: {target_path}")
         result = scan_target(
             target=target_path,
             output_file=args.output,
@@ -120,18 +121,23 @@ def main(argv: Optional[list[str]] = None) -> int:
         )
 
         if result:
+            logger.info("Scan completed successfully")
             return 0
         else:
+            logger.error("Scan failed")
             print("Error: Scan failed", file=sys.stderr)
             return 1
 
     except FileNotFoundError as e:
+        logger.error(f"File not found: {e}", exc_info=True)
         print(f"Error: File not found - {e}", file=sys.stderr)
         return 1
     except PermissionError as e:
+        logger.error(f"Permission denied: {e}", exc_info=True)
         print(f"Error: Permission denied - {e}", file=sys.stderr)
         return 1
     except Exception as e:
+        logger.error(f"Unexpected error: {e}", exc_info=True)
         print(f"Error: {e}", file=sys.stderr)
         return 1
     finally:
@@ -139,14 +145,12 @@ def main(argv: Optional[list[str]] = None) -> int:
         if temp_file:
             try:
                 os.unlink(temp_file.name)
-                if args.verbose:
-                    print(f"Cleaned up temporary file: {temp_file.name}", file=sys.stderr)
+                logger.debug(f"Cleaned up temporary file: {temp_file.name}")
             except FileNotFoundError:
                 # File already deleted, no action needed
                 pass
             except OSError as e:
-                if args.verbose:
-                    print(f"Warning: Could not delete temporary file: {e}", file=sys.stderr)
+                logger.warning(f"Could not delete temporary file: {e}")
 
 
 if __name__ == "__main__":

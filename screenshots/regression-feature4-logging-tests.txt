@@ -1,0 +1,26 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /home/apexaipc/projects/yce-harness/generations/metroplex-2/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/apexaipc/projects/yce-harness/generations/metroplex-2
+plugins: cov-7.0.0
+collecting ... collected 17 items
+
+tests/test_logging.py::TestLoggingConfiguration::test_setup_logging_default_level PASSED [  5%]
+tests/test_logging.py::TestLoggingConfiguration::test_setup_logging_verbose_level PASSED [ 11%]
+tests/test_logging.py::TestLoggingConfiguration::test_setup_logging_debug_env_var PASSED [ 17%]
+tests/test_logging.py::TestLoggingConfiguration::test_setup_logging_debug_env_var_variations PASSED [ 23%]
+tests/test_logging.py::TestLoggingConfiguration::test_logging_format PASSED [ 29%]
+tests/test_logging.py::TestLoggingOutput::test_normal_mode_minimal_output PASSED [ 35%]
+tests/test_logging.py::TestLoggingOutput::test_verbose_mode_detailed_output PASSED [ 41%]
+tests/test_logging.py::TestLoggingOutput::test_error_logging_with_context PASSED [ 47%]
+tests/test_logging.py::TestStructuredLogging::test_scan_start_logged PASSED [ 52%]
+tests/test_logging.py::TestStructuredLogging::test_file_scanning_logged PASSED [ 58%]
+tests/test_logging.py::TestStructuredLogging::test_findings_logged PASSED [ 64%]
+tests/test_logging.py::TestStructuredLogging::test_scan_summary_logged PASSED [ 70%]
+tests/test_logging.py::TestErrorContextEnrichment::test_file_not_found_context PASSED [ 76%]
+tests/test_logging.py::TestErrorContextEnrichment::test_permission_error_context PASSED [ 82%]
+tests/test_logging.py::TestErrorContextEnrichment::test_traceback_logged_at_debug_level PASSED [ 88%]
+tests/test_logging.py::TestPathValidationLogging::test_path_validation_logs_debug_info PASSED [ 94%]
+tests/test_logging.py::TestPathValidationLogging::test_path_traversal_attempt_logged PASSED [100%]
+
+============================== 17 passed in 0.05s ==============================

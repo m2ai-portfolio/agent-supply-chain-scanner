@@ -3,6 +3,7 @@
 import os
 import json
 import re
+import logging
 from dataclasses import dataclass, field, asdict
 from typing import Optional, List
 from pathlib import Path
@@ -95,6 +96,7 @@ class SecurityScanner:
         self.verbose = verbose
         self.findings: List[Finding] = []
         self.files_scanned = 0
+        self.logger = logging.getLogger(__name__)
 
     def scan_file(self, file_path: str) -> List[Finding]:
         """Scan a single file for security issues.
@@ -106,31 +108,31 @@ class SecurityScanner:
             List of Finding objects
         """
         findings: List[Finding] = []
+        self.logger.debug(f"Scanning file: {file_path}")
 
         # Validate file format
         is_scannable, warnings = validate_file_format(file_path, verbose=self.verbose)
 
         if not is_scannable:
-            if self.verbose:
-                for warning in warnings:
-                    print(f"  Warning: {warning}")
+            for warning in warnings:
+                self.logger.warning(f"File validation failed: {warning}")
             return findings
 
-        # Print non-critical warnings
-        if self.verbose and warnings:
+        # Log non-critical warnings
+        if warnings:
             for warning in warnings:
-                print(f"  Note: {warning}")
+                self.logger.info(f"File warning: {warning}")
 
         try:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 lines = f.readlines()
 
             self.files_scanned += 1
+            self.logger.info(f"Scanning file {self.files_scanned}: {file_path}")
 
             # Handle empty files
             if not lines:
-                if self.verbose:
-                    print(f"  Note: File is empty, no content to scan")
+                self.logger.debug(f"File is empty, no content to scan: {file_path}")
                 return findings
 
             for line_num, line in enumerate(lines, start=1):
@@ -147,22 +149,16 @@ class SecurityScanner:
                                 pattern_type=pattern_type
                             )
                             findings.append(finding)
-
-                            if self.verbose:
-                                print(f"  [{severity.upper()}] Line {line_num}: {description}")
+                            self.logger.warning(f"[{severity.upper()}] {file_path}:{line_num} - {description}")
 
         except FileNotFoundError:
-            if self.verbose:
-                print(f"  Error: File not found: {file_path}")
+            self.logger.error(f"File not found: {file_path}")
         except PermissionError:
-            if self.verbose:
-                print(f"  Error: Permission denied reading file: {file_path}")
+            self.logger.error(f"Permission denied reading file: {file_path}")
         except (IOError, OSError) as e:
-            if self.verbose:
-                print(f"  Warning: Could not read file {file_path}: {e}")
+            self.logger.error(f"Could not read file {file_path}: {e}", exc_info=True)
         except UnicodeDecodeError:
-            if self.verbose:
-                print(f"  Warning: Could not decode file {file_path} (binary file?)")
+            self.logger.warning(f"Could not decode file {file_path} (binary file?)")
 
         return findings
 
@@ -176,10 +172,14 @@ class SecurityScanner:
             List of Finding objects
         """
         findings = []
+        self.logger.info(f"Scanning directory: {directory_path}")
 
         try:
             for root, dirs, files in os.walk(directory_path):
                 # Skip common directories that shouldn't be scanned
+                skipped_dirs = {d for d in dirs if d in {'.git', '__pycache__', 'node_modules', '.venv', 'venv'}}
+                if skipped_dirs:
+                    self.logger.debug(f"Skipping directories: {skipped_dirs}")
                 dirs[:] = [d for d in dirs if d not in {'.git', '__pycache__', 'node_modules', '.venv', 'venv'}]
 
                 for file in files:
@@ -187,16 +187,15 @@ class SecurityScanner:
                     file_ext = os.path.splitext(file)[1].lower()
 
                     if file_ext in SUPPORTED_EXTENSIONS:
-                        if self.verbose:
-                            print(f"  Scanning: {file_path}")
+                        self.logger.debug(f"Found scannable file: {file_path}")
                         findings.extend(self.scan_file(file_path))
+                    else:
+                        self.logger.debug(f"Skipping unsupported file type: {file_path}")
 
         except PermissionError as e:
-            if self.verbose:
-                print(f"  Error: Permission denied scanning directory {directory_path}: {e}")
+            self.logger.error(f"Permission denied scanning directory {directory_path}: {e}", exc_info=True)
         except (IOError, OSError) as e:
-            if self.verbose:
-                print(f"  Warning: Error scanning directory {directory_path}: {e}")
+            self.logger.error(f"Error scanning directory {directory_path}: {e}", exc_info=True)
 
         return findings
 
@@ -253,26 +252,29 @@ def scan_target(
         FileNotFoundError: If target path doesn't exist
         ValueError: If target path is invalid
     """
+    logger = logging.getLogger(__name__)
+    logger.info(f"Starting scan - target: {target}, format: {output_format}")
+
     # Validate target path for security (prevent path traversal)
     is_valid, error_msg = validate_file_path(target, must_exist=True, check_writable=False)
     if not is_valid:
+        logger.error(f"Invalid target path: {error_msg}")
         raise ValueError(f"Invalid target path: {error_msg}")
 
     # Validate output file path if provided (prevent arbitrary file write)
     if output_file:
+        logger.debug(f"Output file specified: {output_file}")
         # First ensure parent directory exists (create if needed)
         success, error_msg = ensure_parent_directory(output_file)
         if not success:
+            logger.error(f"Cannot create output file: {error_msg}")
             raise ValueError(f"Cannot create output file: {error_msg}")
 
         # Then validate the output path
         is_valid, error_msg = validate_file_path(output_file, must_exist=False, check_writable=True)
         if not is_valid:
+            logger.error(f"Invalid output file path: {error_msg}")
             raise ValueError(f"Invalid output file path: {error_msg}")
-
-    if verbose:
-        print(f"Scanning target: {target}")
-        print(f"Output format: {output_format}")
 
     # Initialize scanner
     scanner = SecurityScanner(verbose=verbose)
@@ -282,18 +284,18 @@ def scan_target(
     findings = []
 
     if target_path.is_file():
-        if verbose:
-            print(f"  Scanning file: {target}")
+        logger.info(f"Target is a file: {target}")
         findings = scanner.scan_file(str(target_path))
     elif target_path.is_dir():
-        if verbose:
-            print(f"  Scanning directory: {target}")
+        logger.info(f"Target is a directory: {target}")
         findings = scanner.scan_directory(str(target_path))
     else:
+        logger.error(f"Target is neither a file nor a directory: {target}")
         raise ValueError(f"Target is neither a file nor a directory: {target}")
 
     # Calculate risk score
     risk_score = calculate_risk_score(findings)
+    logger.info(f"Calculated risk score: {risk_score}")
 
     # Create scan result
     scan_result = ScanResult(
@@ -309,11 +311,7 @@ def scan_target(
         ]
     )
 
-    if verbose:
-        print(f"\nScan complete!")
-        print(f"  Files scanned: {scan_result.total_files_scanned}")
-        print(f"  Total findings: {len(findings)}")
-        print(f"  Risk score: {risk_score.upper()}")
+    logger.info(f"Scan complete - Files: {scan_result.total_files_scanned}, Findings: {len(findings)}, Risk: {risk_score.upper()}")
 
     # Format and output results
     output_content = _format_results(scan_result, output_format)
@@ -322,11 +320,12 @@ def scan_target(
         try:
             with open(output_file, 'w') as f:
                 f.write(output_content)
-            if verbose:
-                print(f"  Results written to: {output_file}")
+            logger.info(f"Results written to: {output_file}")
         except PermissionError:
+            logger.error(f"Permission denied writing to output file: {output_file}", exc_info=True)
             raise PermissionError(f"Permission denied writing to output file: {output_file}")
         except (IOError, OSError) as e:
+            logger.error(f"Failed to write output file: {e}", exc_info=True)
             raise IOError(f"Failed to write output file: {e}")
     else:
         print(output_content)

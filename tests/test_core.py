@@ -318,15 +318,21 @@ class TestScanTargetFunction:
 
     def test_scan_target_verbose_mode(self, tmp_path, capsys):
         """Test scanning in verbose mode."""
+        from src.utils import setup_logging
+
         test_file = tmp_path / "test.py"
         test_file.write_text("print('hello')")
+
+        # Setup logging before calling scan_target
+        setup_logging(verbose=True)
 
         result = scan_target(str(test_file), verbose=True)
 
         assert result is True
 
         captured = capsys.readouterr()
-        assert "Scanning target" in captured.out
+        # Logs go to stderr, scan report goes to stdout
+        assert "Starting scan" in captured.err or "Scanning" in captured.err
 
     def test_scan_target_json_output_structure(self, tmp_path):
         """Test the structure of JSON output."""

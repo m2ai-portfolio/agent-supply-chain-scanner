@@ -193,8 +193,8 @@ class TestMainFunction:
         assert exit_code == 0
 
         captured = capsys.readouterr()
-        # Verbose output should contain scanning information
-        assert "Scanning target" in captured.out or "Scanning target" in captured.err
+        # Verbose output should contain scanning information in stderr (logs)
+        assert "Starting scan" in captured.err or "Scanning" in captured.err
 
 
 class TestIntegration:

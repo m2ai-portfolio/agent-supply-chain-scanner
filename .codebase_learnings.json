@@ -19,6 +19,13 @@
     "Validate output file paths before writing - prevent arbitrary file writes",
     "Don't expose full exception details to users - log internally, show generic messages"
   ],
+  "testing_patterns": [
+    "Use conftest.py with shared fixtures (yield + try/finally for cleanup)",
+    "Use monkeypatch to simulate filesystem errors (FileNotFoundError, PermissionError, IOError)",
+    "Separate tests into logical classes (TestFullWorkflows, TestEdgeCases, etc.)",
+    "Binary detection: check null bytes + non-printable ratio + MIME types",
+    "Temporary file security: set 0o600 permissions, avoid TOCTOU in cleanup"
+  ],
   "review_history": [
     {
       "session": 1,
@@ -26,6 +33,32 @@
       "feature": "CLI Argument Parsing (M2A-124)",
       "result": "WARN - Fixed critical path traversal and arbitrary file write vulnerabilities",
       "learnings_added": 6
+    },
+    {
+      "session": 1,
+      "feature": "Core Command (M2A-125)",
+      "result": "WARN - No blockers, 8 medium improvements noted"
+    },
+    {
+      "session": 1,
+      "feature": "File I/O (M2A-126)",
+      "result": "WARN - Fixed temp file security, TOCTOU, binary detection"
+    },
+    {
+      "session": 1,
+      "feature": "Logging (M2A-127)",
+      "result": "WARN - Low issues only, proper log level architecture"
+    },
+    {
+      "session": 1,
+      "feature": "Testing Suite (M2A-128)",
+      "result": "PASS - 180 tests, 98% coverage"
     }
-  ]
+  ],
+  "project_stats": {
+    "total_tests": 180,
+    "coverage": "98%",
+    "features_complete": 5,
+    "total_features": 5
+  }
 }

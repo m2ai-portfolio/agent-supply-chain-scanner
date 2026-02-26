@@ -1,0 +1,53 @@
+{
+  "project_id": "7e1f6209-bc47-4bc8-a44c-ab48a163a80a",
+  "project_name": "Agent Supply Chain Scanner",
+  "project_slug": "2dd5eff0edfb",
+  "team_key": "M2A",
+  "meta_issue_id": "1fcfe384-24e1-4271-a190-935d06b7121d",
+  "meta_issue_identifier": "M2A-129",
+  "total_issues": 5,
+  "initialized": true,
+  "created_at": "2026-02-26T20:04:18Z",
+  "issues": [
+    {
+      "id": "0639b4f3-25dd-49a8-81e2-7ee4a785db9e",
+      "identifier": "M2A-124",
+      "title": "CLI Argument Parsing - Command-line argument parser setup",
+      "priority": 1,
+      "priority_label": "Urgent",
+      "description": "## Feature Description\nSet up command-line argument parser for user inputs using argparse.\n\n## Requirements\n- Use argparse to define CLI commands and options\n- Support --help flag for usage instructions\n- Validate required arguments\n- Provide clear error messages for invalid inputs\n\n## Test Steps\n1. Run with --help flag → displays usage information\n2. Run with missing required args → shows error message\n3. Run with valid args → processes successfully\n\n## Acceptance Criteria\n- [ ] argparse parser is initialized with all required commands\n- [ ] --help flag displays comprehensive usage information\n- [ ] Required arguments are validated before execution\n- [ ] Invalid inputs show clear, actionable error messages"
+    },
+    {
+      "id": "50e6d1cf-d2c5-4953-8d97-6840fe55c42d",
+      "identifier": "M2A-125",
+      "title": "Core Command Implementation - Main functionality",
+      "priority": 2,
+      "priority_label": "High",
+      "description": "## Feature Description\nImplement main functionality of the tool to scan MCP servers and AI agent skills.\n\n## Requirements\n- Process input data according to tool purpose\n- Handle errors gracefully with user-friendly messages\n- Output results in clear, readable format\n- Support common CLI patterns (stdin/stdout)\n\n## Test Steps\n1. Execute core command with valid input → produces expected output\n2. Execute with invalid input → shows helpful error message\n3. Verify output format is readable and correct\n\n## Acceptance Criteria\n- [ ] Core scanning logic is implemented\n- [ ] Errors are caught and handled gracefully\n- [ ] Output format is clear and readable\n- [ ] stdin/stdout patterns are supported"
+    },
+    {
+      "id": "e8196517-e86d-410c-8faa-d6630be1c4db",
+      "identifier": "M2A-126",
+      "title": "File I/O Operations - Reading and writing files",
+      "priority": 3,
+      "priority_label": "High",
+      "description": "## Feature Description\nHandle reading from and writing to files for input/output operations.\n\n## Requirements\n- Support reading from files or stdin\n- Support writing to files or stdout\n- Handle file not found errors\n- Validate file formats where applicable\n\n## Test Steps\n1. Read from input file → processes correctly\n2. Write to output file → creates file with correct content\n3. Handle missing input file → shows clear error\n\n## Acceptance Criteria\n- [ ] File reading works from both files and stdin\n- [ ] File writing works to both files and stdout\n- [ ] Missing files are handled with clear error messages\n- [ ] File formats are validated appropriately"
+    },
+    {
+      "id": "1db06a36-137d-4282-bc97-8d38ec76ad0b",
+      "identifier": "M2A-127",
+      "title": "Logging and Debugging - Verbose logging support",
+      "priority": 4,
+      "priority_label": "Medium",
+      "description": "## Feature Description\nAdd logging support for troubleshooting using Python logging module.\n\n## Requirements\n- Use Python logging module\n- Support --verbose flag for detailed output\n- Log important operations and errors\n- Default to quiet operation\n\n## Test Steps\n1. Run normally → minimal output\n2. Run with --verbose → shows detailed logs\n3. Errors are logged with context\n\n## Acceptance Criteria\n- [ ] Python logging module is configured\n- [ ] --verbose flag controls output verbosity\n- [ ] Important operations are logged\n- [ ] Default mode is quiet with minimal output"
+    },
+    {
+      "id": "10a84623-d522-438b-89a5-ee32dfb2ec94",
+      "identifier": "M2A-128",
+      "title": "Testing Suite - Comprehensive pytest coverage",
+      "priority": 5,
+      "priority_label": "Medium",
+      "description": "## Feature Description\nComprehensive pytest test coverage for the CLI tool.\n\n## Requirements\n- Unit tests for core functions\n- Integration tests for CLI commands\n- Test edge cases and error conditions\n- Achieve >80% code coverage\n\n## Test Steps\n1. Run pytest → all tests pass\n2. Tests cover main functionality\n3. Tests verify error handling\n\n## Acceptance Criteria\n- [ ] Unit tests for core functions are written\n- [ ] Integration tests for CLI commands exist\n- [ ] Edge cases and errors are tested\n- [ ] Code coverage exceeds 80%"
+    }
+  ]
+}

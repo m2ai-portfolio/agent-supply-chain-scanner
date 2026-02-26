@@ -2,9 +2,6 @@
 pytest>=7.4.0
 pytest-cov>=4.1.0
 
-# CLI and utilities
-click>=8.1.0
-
 # Code quality
 black>=23.0.0
 flake8>=6.0.0

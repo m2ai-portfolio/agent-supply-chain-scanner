@@ -1,0 +1,4 @@
+usage: agent-supply-chain-scanner [-h] [-v] [-o FILE] [-f {text,json}]
+                                  [--version]
+                                  target
+agent-supply-chain-scanner: error: the following arguments are required: target

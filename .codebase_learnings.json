@@ -1,0 +1,31 @@
+{
+  "codebase_patterns": {
+    "framework": "Python 3.11+ CLI tool using argparse",
+    "file_structure": "src/ for source code (cli.py, core.py, utils.py), tests/ for pytest tests",
+    "entry_point": "python -m src.cli",
+    "test_command": "pytest tests/ -v"
+  },
+  "common_mistakes_to_avoid": [
+    "Always validate file paths with validate_file_path() from utils.py before processing - prevents path traversal attacks",
+    "Don't add redundant validation that argparse already handles (e.g., checking for empty required args)",
+    "Move all imports to module level, not inside functions",
+    "Remove unused dependencies from requirements.txt",
+    "Remove unused imports from test files",
+    "Security tools must clearly indicate stub/prototype status in output"
+  ],
+  "security_patterns": [
+    "Use os.path.realpath() and os.path.abspath() to resolve paths before validation",
+    "Check for path traversal sequences (../) in user-provided paths",
+    "Validate output file paths before writing - prevent arbitrary file writes",
+    "Don't expose full exception details to users - log internally, show generic messages"
+  ],
+  "review_history": [
+    {
+      "session": 1,
+      "date": "2026-02-26",
+      "feature": "CLI Argument Parsing (M2A-124)",
+      "result": "WARN - Fixed critical path traversal and arbitrary file write vulnerabilities",
+      "learnings_added": 6
+    }
+  ]
+}

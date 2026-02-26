@@ -1,0 +1,21 @@
+usage: agent-supply-chain-scanner [-h] [-v] [-o FILE] [-f {text,json}]
+                                  [--version]
+                                  target
+
+Security Auditor for MCP Servers - Scan MCP servers and AI agent skills for
+security vulnerabilities
+
+positional arguments:
+  target                Path to the MCP server or skill file to scan
+
+options:
+  -h, --help            show this help message and exit
+  -v, --verbose         Enable verbose output for debugging
+  -o FILE, --output FILE
+                        Output file path (default: stdout)
+  -f {text,json}, --format {text,json}
+                        Output format (default: text)
+  --version             show program's version number and exit
+
+For more information, visit: https://github.com/yourusername/agent-supply-
+chain-scanner

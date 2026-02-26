@@ -1,0 +1,37 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0 -- /home/apexaipc/projects/yce-harness/generations/metroplex-2/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/apexaipc/projects/yce-harness/generations/metroplex-2
+plugins: cov-7.0.0
+collecting ... collected 28 items
+
+tests/test_cli.py::TestArgumentParser::test_parser_help PASSED           [  3%]
+tests/test_cli.py::TestArgumentParser::test_parser_version PASSED        [  7%]
+tests/test_cli.py::TestArgumentParser::test_parser_missing_required_args PASSED [ 10%]
+tests/test_cli.py::TestArgumentParser::test_parser_valid_args PASSED     [ 14%]
+tests/test_cli.py::TestArgumentParser::test_parser_all_optional_args PASSED [ 17%]
+tests/test_cli.py::TestArgumentParser::test_parser_short_flags PASSED    [ 21%]
+tests/test_cli.py::TestArgumentParser::test_parser_invalid_format PASSED [ 25%]
+tests/test_cli.py::TestMainFunction::test_main_with_help PASSED          [ 28%]
+tests/test_cli.py::TestMainFunction::test_main_missing_args PASSED       [ 32%]
+tests/test_cli.py::TestMainFunction::test_main_with_valid_args PASSED    [ 35%]
+tests/test_cli.py::TestMainFunction::test_main_with_nonexistent_target PASSED [ 39%]
+tests/test_cli.py::TestMainFunction::test_main_with_output_file PASSED   [ 42%]
+tests/test_cli.py::TestMainFunction::test_main_with_json_output PASSED   [ 46%]
+tests/test_cli.py::TestMainFunction::test_main_with_verbose_flag PASSED  [ 50%]
+tests/test_cli.py::TestIntegration::test_cli_end_to_end PASSED           [ 53%]
+tests/test_security.py::TestPathTraversalPrevention::test_validate_file_path_with_parent_directory_traversal PASSED [ 57%]
+tests/test_security.py::TestPathTraversalPrevention::test_validate_file_path_with_relative_traversal PASSED [ 60%]
+tests/test_security.py::TestPathTraversalPrevention::test_validate_file_path_with_valid_path PASSED [ 64%]
+tests/test_security.py::TestPathTraversalPrevention::test_validate_file_path_nonexistent_when_required PASSED [ 67%]
+tests/test_security.py::TestPathTraversalPrevention::test_validate_file_path_nonexistent_when_optional PASSED [ 71%]
+tests/test_security.py::TestPathTraversalPrevention::test_validate_file_path_empty_string PASSED [ 75%]
+tests/test_security.py::TestPathTraversalPrevention::test_validate_file_path_invalid_type PASSED [ 78%]
+tests/test_security.py::TestPathTraversalPrevention::test_scan_target_rejects_path_traversal PASSED [ 82%]
+tests/test_security.py::TestPathTraversalPrevention::test_scan_target_rejects_traversal_in_output PASSED [ 85%]
+tests/test_security.py::TestPathTraversalPrevention::test_scan_target_accepts_valid_paths PASSED [ 89%]
+tests/test_security.py::TestPathTraversalPrevention::test_validate_writable_path_in_nonexistent_parent PASSED [ 92%]
+tests/test_security.py::TestStubImplementationWarning::test_scan_results_contain_stub_warning PASSED [ 96%]
+tests/test_security.py::TestStubImplementationWarning::test_text_output_contains_warnings PASSED [100%]
+
+============================== 28 passed in 0.08s ==============================

@@ -1,0 +1,198 @@
+# Agent Supply Chain Scanner: Security Auditor for MCP Servers - App Specification
+
+## Overview
+
+Create a developer tool that scans MCP servers and AI agent skills for security vulnerabilities, prompt injection risks, and compliance issues before deployment. Inspired by agent-bom and the Skill-Inject research, this would be a Claude-powered MCP server that analyzes other MCP servers' code, tool definitions, and skill files to identify security red flags. Perfect fit for your developer tools ecosystem and addresses the emerging agent supply chain security gap.
+
+**Problem Statement**: 
+
+**Target Audience**: 
+
+---
+
+## Tech Stack
+
+- **Language**: Python 3.11+
+- **Package Manager**: uv or pip
+- **CLI Framework**: argparse or click
+- **Testing**: pytest
+- **Type Checking**: mypy (optional)
+
+---
+
+## Environment Setup
+
+### Prerequisites
+- Python 3.11+
+
+### Configuration
+
+Environment variables:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DEBUG` | No | Enable debug logging (default: false) |
+
+---
+
+## Architecture
+
+```
+┌─────────────────────────────────┐
+│         CLI Tool                 │
+│   ┌──────────┐  ┌──────────┐   │
+│   │  Parser  │  │ Commands │   │
+│   └──────────┘  └──────────┘   │
+└──────────────┬──────────────────┘
+               │
+┌──────────────┴──────────────────┐
+│         Business Logic           │
+│   ┌──────────┐  ┌──────────┐   │
+│   │ Services │  │ Utilities│   │
+│   └──────────┘  └──────────┘   │
+└─────────────────────────────────┘
+```
+
+---
+
+## Core Features
+
+### Feature 1: CLI Argument Parsing
+**Description**: Set up command-line argument parser for user inputs
+
+**Requirements**:
+- Use argparse to define CLI commands and options
+- Support --help flag for usage instructions
+- Validate required arguments
+- Provide clear error messages for invalid inputs
+
+**Test Steps**:
+1. Run with --help flag → displays usage information
+2. Run with missing required args → shows error message
+3. Run with valid args → processes successfully
+
+---
+
+### Feature 2: Core Command Implementation
+**Description**: Implement main functionality of the tool
+
+**Requirements**:
+- Process input data according to tool purpose
+- Handle errors gracefully with user-friendly messages
+- Output results in clear, readable format
+- Support common CLI patterns (stdin/stdout)
+
+**Test Steps**:
+1. Execute core command with valid input → produces expected output
+2. Execute with invalid input → shows helpful error message
+3. Verify output format is readable and correct
+
+---
+
+### Feature 3: File I/O Operations
+**Description**: Handle reading from and writing to files
+
+**Requirements**:
+- Support reading from files or stdin
+- Support writing to files or stdout
+- Handle file not found errors
+- Validate file formats where applicable
+
+**Test Steps**:
+1. Read from input file → processes correctly
+2. Write to output file → creates file with correct content
+3. Handle missing input file → shows clear error
+
+---
+
+### Feature 4: Logging and Debugging
+**Description**: Add logging support for troubleshooting
+
+**Requirements**:
+- Use Python logging module
+- Support --verbose flag for detailed output
+- Log important operations and errors
+- Default to quiet operation
+
+**Test Steps**:
+1. Run normally → minimal output
+2. Run with --verbose → shows detailed logs
+3. Errors are logged with context
+
+---
+
+### Feature 5: Testing Suite
+**Description**: Comprehensive pytest test coverage
+
+**Requirements**:
+- Unit tests for core functions
+- Integration tests for CLI commands
+- Test edge cases and error conditions
+- Achieve >80% code coverage
+
+**Test Steps**:
+1. Run pytest → all tests pass
+2. Tests cover main functionality
+3. Tests verify error handling
+
+
+---
+
+## Data Models
+
+[Define data structures used by the tool, if applicable]
+
+```python
+from dataclasses import dataclass
+from typing import Optional
+
+@dataclass
+class ToolConfig:
+    """Configuration for the tool"""
+    input_file: str
+    output_file: Optional[str] = None
+    verbose: bool = False
+```
+
+---
+
+
+## File Structure
+
+```
+agent-supply-chain-scanner:-security-auditor-for-mcp-servers/
+├── src/
+│   ├── __init__.py
+│   ├── cli.py              # CLI argument parsing
+│   ├── core.py             # Core functionality
+│   └── utils.py            # Utility functions
+├── tests/
+│   ├── __init__.py
+│   ├── test_cli.py
+│   └── test_core.py
+├── requirements.txt
+├── README.md
+└── init.sh                 # Startup script
+```
+
+---
+
+
+## Success Criteria
+
+1. CLI accepts arguments and displays help correctly
+2. Core functionality processes inputs and produces correct outputs
+3. File I/O operations work reliably
+4. Error messages are clear and helpful
+5. All tests pass with >80% coverage
+6. Tool can be installed and run via init.sh
+
+---
+
+## Constraints & Notes
+
+- This application should be built following best practices for tool development
+- Code should be well-documented with docstrings
+- Follow PEP 8 style guidelines for Python code
+- Include a README.md with setup and usage instructions
+- The init.sh script must set up the environment and start the application

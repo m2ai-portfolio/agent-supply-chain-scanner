@@ -1,0 +1,8 @@
+REGRESSION TEST EVIDENCE - Feature 3: File I/O Operations
+
+Test 3: Handle missing input file
+Command: .venv/bin/python -m src.cli /nonexistent/file.py
+Status: PASS
+Evidence: Correctly returned exit code 1 with clear error message:
+'Error: Invalid target path: Path does not exist: /nonexistent/file.py'
+No stack trace, clean error handling

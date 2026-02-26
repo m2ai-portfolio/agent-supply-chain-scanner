@@ -7,7 +7,7 @@ from dataclasses import dataclass, field, asdict
 from typing import Optional, List
 from pathlib import Path
 
-from src.utils import validate_file_path
+from src.utils import validate_file_path, validate_file_format, ensure_parent_directory, SUPPORTED_EXTENSIONS
 
 
 @dataclass
@@ -105,13 +105,33 @@ class SecurityScanner:
         Returns:
             List of Finding objects
         """
-        findings = []
+        findings: List[Finding] = []
+
+        # Validate file format
+        is_scannable, warnings = validate_file_format(file_path, verbose=self.verbose)
+
+        if not is_scannable:
+            if self.verbose:
+                for warning in warnings:
+                    print(f"  Warning: {warning}")
+            return findings
+
+        # Print non-critical warnings
+        if self.verbose and warnings:
+            for warning in warnings:
+                print(f"  Note: {warning}")
 
         try:
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 lines = f.readlines()
 
             self.files_scanned += 1
+
+            # Handle empty files
+            if not lines:
+                if self.verbose:
+                    print(f"  Note: File is empty, no content to scan")
+                return findings
 
             for line_num, line in enumerate(lines, start=1):
                 # Check each security pattern
@@ -131,6 +151,12 @@ class SecurityScanner:
                             if self.verbose:
                                 print(f"  [{severity.upper()}] Line {line_num}: {description}")
 
+        except FileNotFoundError:
+            if self.verbose:
+                print(f"  Error: File not found: {file_path}")
+        except PermissionError:
+            if self.verbose:
+                print(f"  Error: Permission denied reading file: {file_path}")
         except (IOError, OSError) as e:
             if self.verbose:
                 print(f"  Warning: Could not read file {file_path}: {e}")
@@ -151,9 +177,6 @@ class SecurityScanner:
         """
         findings = []
 
-        # File extensions to scan
-        scannable_extensions = {'.py', '.json', '.yaml', '.yml', '.txt', '.md', '.sh', '.js', '.ts'}
-
         try:
             for root, dirs, files in os.walk(directory_path):
                 # Skip common directories that shouldn't be scanned
@@ -163,11 +186,14 @@ class SecurityScanner:
                     file_path = os.path.join(root, file)
                     file_ext = os.path.splitext(file)[1].lower()
 
-                    if file_ext in scannable_extensions:
+                    if file_ext in SUPPORTED_EXTENSIONS:
                         if self.verbose:
                             print(f"  Scanning: {file_path}")
                         findings.extend(self.scan_file(file_path))
 
+        except PermissionError as e:
+            if self.verbose:
+                print(f"  Error: Permission denied scanning directory {directory_path}: {e}")
         except (IOError, OSError) as e:
             if self.verbose:
                 print(f"  Warning: Error scanning directory {directory_path}: {e}")
@@ -234,6 +260,12 @@ def scan_target(
 
     # Validate output file path if provided (prevent arbitrary file write)
     if output_file:
+        # First ensure parent directory exists (create if needed)
+        success, error_msg = ensure_parent_directory(output_file)
+        if not success:
+            raise ValueError(f"Cannot create output file: {error_msg}")
+
+        # Then validate the output path
         is_valid, error_msg = validate_file_path(output_file, must_exist=False, check_writable=True)
         if not is_valid:
             raise ValueError(f"Invalid output file path: {error_msg}")
@@ -287,10 +319,15 @@ def scan_target(
     output_content = _format_results(scan_result, output_format)
 
     if output_file:
-        with open(output_file, 'w') as f:
-            f.write(output_content)
-        if verbose:
-            print(f"  Results written to: {output_file}")
+        try:
+            with open(output_file, 'w') as f:
+                f.write(output_content)
+            if verbose:
+                print(f"  Results written to: {output_file}")
+        except PermissionError:
+            raise PermissionError(f"Permission denied writing to output file: {output_file}")
+        except (IOError, OSError) as e:
+            raise IOError(f"Failed to write output file: {e}")
     else:
         print(output_content)
 

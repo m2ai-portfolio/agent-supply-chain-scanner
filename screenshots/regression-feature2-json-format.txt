@@ -1,0 +1,11 @@
+REGRESSION TEST EVIDENCE - Existing Features
+
+Test 6: JSON Format Output (Feature 2)
+Command: .venv/bin/python -m src.cli src/core.py --format json
+Status: PASS
+Evidence: Valid JSON output produced with correct structure:
+- target, status, total_files_scanned, risk_score
+- summary with findings count breakdown
+- findings array with 5 items
+- warnings array
+JSON is properly formatted and parseable

@@ -1,0 +1,6 @@
+REGRESSION TEST EVIDENCE - Feature 3: File I/O Operations
+
+Test 1: Read from input file
+Command: .venv/bin/python -m src.cli src/core.py
+Status: PASS
+Evidence: Successfully read and processed src/core.py, identified 5 findings (4 critical, 1 high)

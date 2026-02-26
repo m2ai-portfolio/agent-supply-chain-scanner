@@ -1,0 +1,7 @@
+REGRESSION TEST EVIDENCE - Feature 3: File I/O Operations
+
+Test 2: Write to output file
+Command: .venv/bin/python -m src.cli src/core.py --output /tmp/scan_results.txt
+Status: PASS
+Evidence: Successfully created /tmp/scan_results.txt with 55 lines of formatted security scan report
+Output file verified with correct content structure

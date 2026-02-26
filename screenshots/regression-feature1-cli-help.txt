@@ -1,0 +1,9 @@
+REGRESSION TEST EVIDENCE - Existing Features
+
+Test 5: CLI Help (Feature 1)
+Command: .venv/bin/python -m src.cli --help
+Status: PASS
+Evidence: Help message displays correctly with all options:
+- positional argument: target
+- options: -h, -v, -o, -f, --version
+- Usage instructions clear and comprehensive

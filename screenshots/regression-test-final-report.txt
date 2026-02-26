@@ -1,0 +1,139 @@
+======================================================================
+REGRESSION TEST REPORT - Feature 3: File I/O Operations
+Agent Supply Chain Scanner
+======================================================================
+Test Date: 2026-02-26
+Working Directory: /home/apexaipc/projects/yce-harness/generations/metroplex-2
+Test Type: Regression Test (Post-Implementation)
+
+OVERALL STATUS: PASS
+
+======================================================================
+NEW FEATURE TESTED: Feature 3 - File I/O Operations
+======================================================================
+
+Test 1: Read from Input File
+  Command: .venv/bin/python -m src.cli src/core.py
+  Status: PASS
+  Details: Successfully read and processed Python file
+  Findings: 5 vulnerabilities detected (4 critical, 1 high)
+  Output: Clean text format to stdout
+  Evidence: screenshots/regression-feature3-test1-read-input.txt
+
+Test 2: Write to Output File
+  Command: .venv/bin/python -m src.cli src/core.py --output /tmp/scan_results.txt
+  Status: PASS
+  Details: Created output file at /tmp/scan_results.txt
+  File Size: 55 lines
+  Content Verified: Correct security scan report format
+  Evidence: screenshots/regression-feature3-test2-write-output.txt
+
+Test 3: Handle Missing Input File
+  Command: .venv/bin/python -m src.cli /nonexistent/file.py
+  Status: PASS
+  Details: Proper error handling with exit code 1
+  Error Message: "Error: Invalid target path: Path does not exist: /nonexistent/file.py"
+  Clean Output: No stack trace, user-friendly error
+  Evidence: screenshots/regression-feature3-test3-missing-file-error.txt
+
+Test 4: Stdin Support
+  Command: echo 'eval(user_input)' | .venv/bin/python -m src.cli -
+  Status: PASS
+  Details: Successfully read code from stdin using dash (-) argument
+  Temp File: /tmp/tmpv9gmw1j9.txt (auto-created)
+  Findings: 1 critical vulnerability detected (eval function)
+  Evidence: screenshots/regression-feature3-test4-stdin-support.txt
+
+Feature 3 Summary: 4/4 tests PASSED - 100% success rate
+
+======================================================================
+REGRESSION TESTS: Existing Features (Features 1-2)
+======================================================================
+
+Test 5: CLI Help Display (Feature 1)
+  Command: .venv/bin/python -m src.cli --help
+  Status: PASS
+  Details: Help message displays all options correctly
+  Options Verified: -h, -v, -o, -f, --version, target argument
+  Evidence: screenshots/regression-feature1-cli-help.txt
+
+Test 6: JSON Format Output (Feature 2)
+  Command: .venv/bin/python -m src.cli src/core.py --format json
+  Status: PASS
+  Details: Valid JSON output with correct structure
+  Fields Verified: target, status, summary, findings, warnings
+  Findings Array: 5 items with proper schema
+  Evidence: screenshots/regression-feature2-json-format.txt
+
+Test 7: Full Pytest Suite (All Features)
+  Command: .venv/bin/python -m pytest tests/ -v
+  Status: PASS
+  Total Tests: 88
+  Passed: 87
+  Skipped: 1 (permission denied test - expected)
+  Failed: 0
+  Execution Time: 0.17s
+  Test Coverage:
+    - test_cli.py: 15 tests (Feature 1)
+    - test_core.py: 26 tests (Core functionality)
+    - test_file_io.py: 31 tests (Feature 3)
+    - test_security.py: 16 tests (Security features)
+  Evidence: screenshots/regression-pytest-all-tests.txt
+
+Regression Summary: 3/3 tests PASSED - No regressions detected
+
+======================================================================
+FINAL SUMMARY
+======================================================================
+
+Regression Test: PASS
+
+New Feature Status:
+  Name: Feature 3 - File I/O Operations
+  Status: PASS
+  Tests: 4/4 passed
+  Details: All file I/O operations work correctly:
+    - File reading from disk
+    - File writing to specified output path
+    - Error handling for missing files
+    - Stdin input support with dash argument
+
+Existing Features Status:
+  Feature 1 (CLI Interface): PASS
+  Feature 2 (Output Formats): PASS
+  Full Test Suite: PASS (87/88 tests, 1 expected skip)
+
+Issues Found: none
+
+Screenshots/Evidence:
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-2/screenshots/regression-feature3-test1-read-input.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-2/screenshots/regression-feature3-test2-write-output.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-2/screenshots/regression-feature3-test3-missing-file-error.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-2/screenshots/regression-feature3-test4-stdin-support.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-2/screenshots/regression-feature1-cli-help.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-2/screenshots/regression-feature2-json-format.txt
+  - /home/apexaipc/projects/yce-harness/generations/metroplex-2/screenshots/regression-pytest-all-tests.txt
+
+Server Status: N/A (CLI application, no server required)
+
+======================================================================
+CONCLUSION
+======================================================================
+
+All regression tests PASSED successfully. Feature 3 (File I/O Operations) 
+is fully functional with no regressions to existing Features 1-2.
+
+The Agent Supply Chain Scanner correctly:
+1. Reads input files from disk
+2. Writes output to specified file paths
+3. Handles missing files with clear error messages
+4. Supports stdin input via dash argument
+5. Maintains backward compatibility with CLI help and JSON output
+6. Passes all 87 automated tests (1 permission test skipped as expected)
+
+RECOMMENDATION: Feature 3 is production-ready.
+
+======================================================================
+Test Completed: 2026-02-26 14:56 UTC
+QA Agent: Claude (Sonnet 4.5)
+======================================================================

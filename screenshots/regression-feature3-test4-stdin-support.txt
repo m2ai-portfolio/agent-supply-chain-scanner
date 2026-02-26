@@ -1,0 +1,8 @@
+REGRESSION TEST EVIDENCE - Feature 3: File I/O Operations
+
+Test 4: Stdin support
+Command: echo 'eval(user_input)' | .venv/bin/python -m src.cli -
+Status: PASS
+Evidence: Successfully read from stdin (dash argument), created temp file /tmp/tmpv9gmw1j9.txt
+Detected 1 critical finding: Dangerous eval() function at line 1
+Scanner correctly processed stdin input as temporary file

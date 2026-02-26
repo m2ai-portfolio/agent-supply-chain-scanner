@@ -1,0 +1,14 @@
+REGRESSION TEST EVIDENCE - Full Test Suite
+
+Test 7: Pytest Full Test Suite
+Command: .venv/bin/python -m pytest tests/ -v
+Status: PASS (87 passed, 1 skipped as expected)
+Total Tests: 88
+- test_cli.py: 15 tests PASSED
+- test_core.py: 26 tests PASSED
+- test_file_io.py: 31 tests PASSED (1 skipped: permission denied test)
+- test_security.py: 16 tests PASSED
+
+All tests completed in 0.17s
+No failures, no errors
+Test coverage includes all Features 1-3

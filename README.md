@@ -1,172 +1,131 @@
-# Agent Supply Chain Scanner
 
-A Python CLI tool that scans MCP servers and AI agent skills for security vulnerabilities, prompt injection risks, and compliance issues before deployment.
 
-## Overview
+<p align="center">
+  <img src="assets/infographic.png" alt="Agent Supply Chain Scanner: Security Auditor for MCP Servers" width="800">
+</p>
 
-Agent Supply Chain Scanner provides automated security analysis for AI agent components, helping teams identify and mitigate risks in their agent infrastructure before production deployment.
+<h3 align="center">Create a developer tool that scans MCP servers and AI agent skills for security vulnerabilities, prompt injection risks, and compliance issues before deployment. Inspired by agent-bom and the Skill-Inject research, this would be a Claude-powered MCP server that analyzes other MCP servers' code, tool definitions, and skill files to identify security red flags. Perfect fit for your developer tools ecosystem and addresses the emerging agent supply chain security gap.</h3>
 
-### Key Features
+<p align="center">
+  <a href="#quick-start">Quick Start</a> &bull;
+  <a href="#features">Features</a> &bull;
+  <a href="#examples">Examples</a> &bull;
+  <a href="#contributing">Contributing</a>
+</p>
 
-- **Vulnerability Scanning**: Detects security vulnerabilities in MCP servers and agent skills
-- **Prompt Injection Detection**: Identifies potential prompt injection attack vectors
-- **Compliance Checking**: Validates compliance with security and deployment policies
-- **Detailed Reporting**: Generates comprehensive security reports for review and remediation
+## What is this?
+The Agent Supply Chain Scanner is a CLI tool that examines MCP servers and AI agent skill files for security flaws, prompt‑injection vectors, and compliance violations before they are shipped. It is aimed at developers and platform engineers who need to vet agent‑based components in their supply chain. A typical invocation looks like:
+
+```
+$ agent-supply-chain-scan --server ./my-mcp-server --output report.json
+Scanning ./my-mcp-server...
+Found 2 prompt‑injection risks in skill/email_helper.py
+Found 1 outdated dependency in requirements.txt
+Compliance check: GDPR‑related data handling missing in skill/profile.py
+Report written to report.json
+```
+
+## Features
+| Feature | Description |
+|---|---|
+| CLI Argument Parsing | Robust argparse‑based interface with `--server`, `--output`, `--verbose`, and `--help` flags. |
+| MCP Server Analysis | Parses Python tool definitions, skill files, and configuration to detect security issues. |
+| Prompt‑Injection Detection | Scans skill code for patterns that could allow malicious input manipulation. |
+| Dependency & License Check | Verifies required packages against known vulnerable versions and compliance licences. |
+| Detailed Reporting | Outputs JSON or human‑readable summary with line numbers and remediation suggestions. |
+| Verbose Logging | `--verbose` flag emits trace‑level logs for debugging complex scan failures. |
+
+## Quick Start
+1. Clone the repository: `git clone https://github.com/m2ai-portfolio/agent-supply-chain-scanner.git`
+2. Change directory: `cd agent-supply-chain-scanner`
+3. Install dependencies using uv (or pip): `uv pip install -r requirements.txt`
+4. Make the init script executable and run it: `chmod +x init.sh && ./init.sh`
+5. Run the scanner on a sample MCP server: `agent-supply-chain-scan --server ./sample-server --output scan-report.json`
+
+## Examples
+**Basic MCP server scan**
+```
+$ agent-supply-chain-scan --server ./example-mcp-server --output basic.json
+Scanning ./example-mcp-server...
+No high‑severity issues detected.
+1 informational note: skill/hello.py uses print() instead of logger.
+Report written to basic.json
+```
+
+**Verbose scanning with JSON report**
+```
+$ agent-supply-chain-scan --server ./secure-mcp-server --output detailed.json --verbose
+[DEBUG] Loading configuration from ./secure-mcp-server/mcp.json
+[DEBUG] Parsing tool definitions in ./secure-mcp-server/tools/
+[INFO] Scanning 3 skill files...
+[WARNING] Potential prompt injection in skill/data_extractor.py: line 42
+[ERROR] Dependency vuln: requests==2.25.0 (CVE-2021-XXXX)
+{
+  "scan_id": "2025-08-27-01",
+  "server": "./secure-mcp-server",
+  "findings": [
+    {
+      "type": "prompt_injection",
+      "file": "skill/data_extractor.py",
+      "line": 42,
+      "description": "User‑input concatenated directly into LLM prompt"
+    },
+    {
+      "type": "dependency_vulnerability",
+      "package": "requests",
+      "version": "2.25.0",
+      "cve": "CVE-2021-XXXX",
+      "severity": "high"
+    }
+  ],
+  "summary": {
+    "total_findings": 2,
+    "high": 1,
+    "medium": 0,
+    "low": 0
+  }
+}
+```
+
+**Scanning a skill file via stdin**
+```
+$ cat skill/risky.py | agent-supply-chain-scan --stdin --output stdin-report.json
+Reading skill from stdin...
+Scan complete. 1 finding: potential prompt injection at line 10.
+Report written to stdin-report.json
+```
+
+## File Structure
+Agent Supply Chain Scanner: Security Auditor for MCP Servers/
+├── src/          # Core source code
+│   ├── __init__.py
+│   ├── cli.py    # CLI entry point and argument parsing
+│   ├── core.py   # Scanning logic and security checks
+│   └── utils.py  # Helper functions for file I/O and logging
+├── tests/        # Test suite
+│   ├── __init__.py
+│   ├── test_cli.py
+│   ├── test_core.py
+│   └── test_utils.py
+├── requirements.txt   # Dependencies (uv/pip)
+├── init.sh            # Setup script to install and run the scanner
+└── README.md
 
 ## Tech Stack
-
-- **Python 3.11+**
-- **argparse**: CLI argument parsing
-- **pytest**: Testing framework
-
-## Setup Instructions
-
-### Prerequisites
-
-- Python 3.11 or higher
-- pip package manager
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd agent-supply-chain-scanner
-```
-
-2. Run the initialization script:
-```bash
-chmod +x init.sh
-./init.sh
-```
-
-The `init.sh` script will:
-- Create a Python virtual environment (if not already present)
-- Install required dependencies from `requirements.txt`
-- Set up the development environment
-
-### Manual Setup
-
-If you prefer manual setup:
-
-```bash
-# Create virtual environment
-python3 -m venv .venv
-
-# Activate virtual environment
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-## Usage
-
-### Running the Scanner
-
-```bash
-# Activate virtual environment first
-source .venv/bin/activate
-
-# Basic scan
-python -m src.cli --target <path-to-mcp-server-or-skill>
-
-# Scan with specific checks
-python -m src.cli --target <path> --checks vulnerabilities,prompt-injection,compliance
-
-# Generate report
-python -m src.cli --target <path> --output report.json
-```
-
-### CLI Arguments
-
-- `--target`: Path to the MCP server or agent skill directory (required)
-- `--checks`: Comma-separated list of checks to run (default: all)
-- `--output`: Output file path for the security report (optional)
-- `--verbose`: Enable verbose output (optional)
-
-### Examples
-
-```bash
-# Scan a local MCP server
-python -m src.cli --target ./my-mcp-server
-
-# Run specific checks with output
-python -m src.cli --target ./my-agent-skill --checks vulnerabilities,prompt-injection --output security-report.json
-
-# Verbose scanning
-python -m src.cli --target ./deployment/agent-service --verbose
-```
-
-## Running Tests
-
-```bash
-# Activate virtual environment
-source .venv/bin/activate
-
-# Run all tests
-pytest
-
-# Run with verbose output
-pytest -v
-
-# Run specific test file
-pytest tests/test_cli.py
-
-# Run with coverage
-pytest --cov=src
-```
-
-## Project Structure
-
-```
-agent-supply-chain-scanner/
-├── src/
-│   ├── __init__.py           # Package initialization
-│   ├── cli.py                # CLI argument parsing and entry point
-│   ├── core.py               # Core scanning and analysis logic
-│   └── utils.py              # Utility functions
-├── tests/
-│   ├── __init__.py           # Test package initialization
-│   ├── test_cli.py           # CLI tests
-│   └── test_core.py          # Core functionality tests
-├── requirements.txt          # Python dependencies
-├── README.md                 # This file
-├── init.sh                   # Setup and initialization script
-├── .gitignore                # Git ignore rules
-└── app_spec.txt              # Application specification
-```
-
-## Development
-
-### Code Style
-
-- Follow PEP 8 style guidelines
-- Use type hints where applicable
-- Write docstrings for all public functions
-
-### Testing Requirements
-
-- All new features should include corresponding tests
-- Maintain test coverage above 80%
-- Run `pytest` before committing changes
+| Technology | Purpose |
+|---|---|
+| Python 3.11+ | Implementation language |
+| uv / pip | Dependency management |
+| argparse | Command‑line interface |
+| pytest | Unit and integration testing |
+| mypy (optional) | Static type checking |
+| logging | Runtime diagnostics and verbose output |
 
 ## Contributing
-
-1. Create a feature branch: `git checkout -b feature/your-feature-name`
-2. Make your changes and add tests
-3. Run tests and ensure all pass: `pytest`
-4. Commit your changes with descriptive messages
-5. Push to your branch and create a pull request
-
-## Security
-
-This tool is designed to help identify security issues in AI agent infrastructure. Please report any security vulnerabilities responsibly.
+Fork the repository, create a feature branch, make changes, run `pytest` to verify, and submit a pull request.
 
 ## License
+MIT
 
-[Specify your license here]
-
-## Support
-
-For issues, questions, or contributions, please open an issue on the project repository.
+## Author
+Matthew Snow -- [M2AI](https://m2ai.co) | [@m2ai-portfolio](https://github.com/m2ai-portfolio)
